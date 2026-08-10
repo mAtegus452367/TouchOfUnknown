@@ -566,6 +566,35 @@ function buildBlocks(container, text){
   if(firstPara) firstPara.classList.add('drop-cap');
 }
 
+function titleFromFilename(id){
+  var s = id.replace(/[-_]+/g, ' ').trim();
+  return s.replace(/\b\p{L}/gu, function(c){ return c.toUpperCase(); });
+}
+
+function parseNovelText(raw, fallbackTitle){
+  var lines = raw.replace(/^\uFEFF/, '').split(/\r\n|\r|\n/);
+  var meta = {};
+  var bodyStart = 0;
+  if(lines.length && lines[0].trim() === '==='){
+    var i = 1;
+    for(; i < lines.length; i++){
+      if(lines[i].trim() === '==='){ i++; break; }
+      var m = lines[i].match(/^([A-Za-zА-Яа-яЁё]+)\s*:\s*(.*)$/);
+      if(m) meta[m[1].trim().toLowerCase()] = m[2].trim();
+    }
+    if(lines[i] !== undefined && lines[i].trim() === '') i++;
+    bodyStart = i;
+  }
+  var body = lines.slice(bodyStart).join('\n').replace(/\s+$/, '');
+  return {
+    title: meta.title || fallbackTitle,
+    description: meta.description || '',
+    author: meta.author || '',
+    createdAt: meta.createdat || meta.created || meta.date || '',
+    text: body
+  };
+}
+
 function loadNovels(){
   return fetch(MANIFEST_URL, { cache:'no-cache' })
     .then(function(r){
@@ -575,17 +604,34 @@ function loadNovels(){
     .then(function(files){
       if(!Array.isArray(files)) throw new Error('MANIFEST');
       return Promise.all(files.map(function(file){
+        var id = String(file).replace(/\.(json|txt)$/i, '');
+        var isJson = /\.json$/i.test(file);
         return fetch('novels/' + file, { cache:'no-cache' })
-          .then(function(r){ return r.ok ? r.json() : null; })
-          .then(function(data){
-            if(!data || !data.title || !data.text) return null;
-            var id = String(file).replace(/\.json$/i, '');
+          .then(function(r){ return r.ok ? r.text() : null; })
+          .then(function(raw){
+            if(raw === null) return null;
+            var data;
+            if(isJson){
+              try{ data = JSON.parse(raw); }catch(e){ return null; }
+              if(!data || !data.title || !data.text) return null;
+              data = {
+                title: String(data.title),
+                description: String(data.description || ''),
+                author: String(data.author || ''),
+                createdAt: data.createdAt,
+                updatedAt: data.updatedAt,
+                text: String(data.text)
+              };
+            }else{
+              data = parseNovelText(raw, titleFromFilename(id));
+              if(!data.title || !data.text.trim()) return null;
+            }
             return {
               id: id,
-              title: String(data.title),
-              description: String(data.description || ''),
-              author: String(data.author || ''),
-              text: String(data.text),
+              title: data.title,
+              description: data.description || '',
+              author: data.author || '',
+              text: data.text,
               createdAt: toTimestamp(data.createdAt) || toTimestamp(data.updatedAt),
               updatedAt: toTimestamp(data.updatedAt) || toTimestamp(data.createdAt),
               favorite: favoriteSet.has(id)
