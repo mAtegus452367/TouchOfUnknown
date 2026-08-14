@@ -19,13 +19,15 @@
   --accent:#8b3a3a; --accent-deep:#6f2d2d; --danger:#b3402e; --line:rgba(44,44,44,.12);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;background:#faf6f0;overscroll-behavior-y:none}
+html.night-bg{background:#1c1613}
 body{
   font-family:'Inter',system-ui,sans-serif;color:var(--ink);min-height:100vh;
   background:
     radial-gradient(1100px 560px at 50% -8%, rgba(139,58,58,.06), transparent 62%),
     linear-gradient(180deg,#faf6f0 0%,#f5efe5 100%);
   -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
 }
 body.locked{overflow:hidden}
 ::selection{background:rgba(139,58,58,.22)}
@@ -122,6 +124,13 @@ body::after{
 .card:hover .card-title{color:var(--accent-deep)}
 .card-desc{font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;line-height:1.5;color:#6e5f58}
 .card-author{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:-6px}
+.card-tag{position:absolute;top:8px;left:44px;z-index:1;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);background:rgba(44,44,44,.07);border:1px solid rgba(44,44,44,.14);border-radius:999px;padding:4px 10px}
+.recent-row{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap;animation:fadeIn .5s both}
+.recent-label{font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap}
+.recent-list{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+.recent-item{font-family:'Playfair Display',serif;font-style:italic;font-size:.85rem;letter-spacing:.01em;padding:8px 15px;border-radius:999px;border:1px solid rgba(139,58,58,.3);background:var(--card);color:#6e5f58;cursor:pointer;transition:.25s;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-item:hover{border-color:rgba(139,58,58,.6);color:var(--accent-deep);background:rgba(139,58,58,.06)}
+.recent-item:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .card-preview{font-size:.9rem;line-height:1.65;color:var(--ink-soft)}
 .card-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px dashed rgba(44,44,44,.16)}
 .card-date{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
@@ -147,52 +156,6 @@ body::after{
 .fab:hover .ic{transform:rotate(90deg)}
 @keyframes fabHalo{0%,100%{box-shadow:0 12px 28px -8px rgba(139,58,58,.6),0 0 0 0 rgba(139,58,58,.26)}50%{box-shadow:0 12px 28px -8px rgba(139,58,58,.6),0 0 0 15px rgba(139,58,58,0)}}
 
-.overlay{position:fixed;inset:0;z-index:1300;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(30,23,18,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .3s}
-#authOverlay{z-index:1320}
-#confirmOverlay{z-index:1400}
-.overlay.open{opacity:1;visibility:visible;transition:opacity .3s ease}
-.modal{position:relative;width:100%;background:#fdfaf4;border:1px solid rgba(44,44,44,.08);border-radius:8px;box-shadow:0 32px 80px -20px rgba(20,15,10,.55);max-height:min(88vh,860px);display:flex;flex-direction:column;transform:translateY(24px) scale(.97);opacity:0;transition:transform .34s cubic-bezier(.22,.61,.3,1),opacity .3s}
-.overlay.open .modal{transform:none;opacity:1}
-.shake{animation:shakeAnim .4s ease}
-@keyframes shakeAnim{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
-.modal-close{position:absolute;top:13px;right:13px;z-index:3;width:36px;height:36px;border-radius:50%;border:1px solid transparent;background:transparent;color:#7a7267;cursor:pointer;display:grid;place-items:center;transition:background .25s,color .25s,transform .3s}
-.modal-close .ic{width:15px;height:15px}
-.modal-close:hover{background:rgba(139,58,58,.1);color:var(--accent);transform:rotate(90deg)}
-.modal-close:focus-visible{outline:2px solid var(--accent)}
-.form-modal{max-width:560px;padding:36px 30px 28px;overflow-y:auto}
-@media(max-width:480px){.form-modal{padding:30px 20px 22px}}
-.form-title{font-family:'Playfair Display',serif;font-weight:600;font-size:1.6rem;margin-bottom:24px}
-.field{margin-bottom:18px}
-.field label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#7a7267;margin-bottom:8px}
-.req{color:var(--accent)}
-.opt{font-weight:400;letter-spacing:.06em;text-transform:none;color:var(--ink-faint)}
-input[type=text],input[type=password],textarea{width:100%;font-family:'Inter',sans-serif;font-size:1rem;color:var(--ink);background:#fffdf9;border:1px solid rgba(44,44,44,.18);border-radius:5px;padding:12px 14px;transition:border-color .25s,box-shadow .25s}
-textarea{line-height:1.6;resize:vertical}
-input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,58,58,.14)}
-.field.invalid input,.field.invalid textarea,.ed-field.invalid input,.ed-field.invalid textarea{border-color:var(--danger);box-shadow:0 0 0 3px rgba(179,64,46,.12)}
-.field-error{display:none;color:var(--danger);font-size:.75rem;margin-top:6px}
-.field.invalid .field-error{display:block;animation:fadeIn .25s}
-.form-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:26px}
-.btn{font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;letter-spacing:.06em;padding:12px 22px;border-radius:5px;cursor:pointer;border:1px solid transparent;transition:background .25s,border-color .25s,color .25s,transform .25s,box-shadow .25s}
-.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.btn:disabled{opacity:.55;cursor:default;transform:none}
-.btn-ghost{background:transparent;border-color:rgba(44,44,44,.28);color:#5a5348}
-.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
-.btn-primary{background:var(--accent);color:#fdf9f3;box-shadow:0 8px 18px -8px rgba(139,58,58,.7)}
-.btn-primary:hover{background:var(--accent-deep);transform:translateY(-1px)}
-.btn-primary:active{transform:translateY(0)}
-.btn-danger{background:var(--danger);color:#fdf9f3;box-shadow:0 8px 18px -8px rgba(179,64,46,.7)}
-.btn-danger:hover{background:#93301f;transform:translateY(-1px)}
-.btn-sm{padding:9px 18px;font-size:.8rem}
-.confirm-modal{max-width:420px;padding:34px 28px 28px}
-.confirm-msg{font-family:'Playfair Display',serif;font-size:1.1rem;line-height:1.55;margin-bottom:6px}
-.owner-note{font-size:.85rem;color:var(--ink-soft);line-height:1.65;margin:-12px 0 22px}
-.lock-note{color:var(--danger);font-size:.82rem;margin:0 0 16px;font-weight:500;line-height:1.5}
-
-.auth-tabs{display:flex;gap:6px;margin-bottom:20px;border-bottom:1px solid var(--line)}
-.auth-tab{flex:1;background:none;border:none;border-bottom:2px solid transparent;padding:10px;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);cursor:pointer;transition:.25s}
-.auth-tab:hover{color:var(--ink)}
-.auth-tab.active{color:var(--accent);border-color:var(--accent)}
 
 .read-meta{text-align:center;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:#a09889;margin-bottom:20px}
 .read-title{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.2;text-align:center}
@@ -210,7 +173,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
 .text-divider{text-align:center;margin:2em 0;color:rgba(139,58,58,.7);font-size:1.05rem;letter-spacing:.6em;padding-left:.6em;user-select:none}
 .read-end{text-align:center;margin-top:56px;color:rgba(139,58,58,.6);font-size:1.15rem;letter-spacing:.6em;padding-left:.6em;user-select:none}
 
-.reader{position:fixed;inset:0;z-index:1100;background:radial-gradient(1000px 500px at 50% -10%, rgba(139,58,58,.05), transparent 60%),linear-gradient(180deg,#faf6f0,#f5efe5);transform:translateX(100%);visibility:hidden;transition:transform .5s cubic-bezier(.22,.61,.21,1),visibility 0s linear .5s;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.reader{position:fixed;inset:0;z-index:1100;background-color:#faf6f0;background-image:radial-gradient(1000px 500px at 50% -10%, rgba(139,58,58,.05), transparent 60%),linear-gradient(180deg,#faf6f0,#f5efe5);transform:translateX(100%);visibility:hidden;transition:transform .5s cubic-bezier(.22,.61,.21,1),visibility 0s linear .5s;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .reader.open{transform:none;visibility:visible;transition:transform .5s cubic-bezier(.22,.61,.21,1)}
 .reader-bar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;background:rgba(250,246,240,.92);border-bottom:1px solid var(--line)}
 .reader-progress{position:absolute;left:0;right:0;bottom:-1px;height:2px}
@@ -232,7 +195,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
 .reader-page{max-width:820px;margin:0 auto;padding:clamp(36px,7vh,72px) 24px 100px}
 .reader.open .reader-page{animation:pageIn .55s .12s cubic-bezier(.22,.61,.3,1) both}
 @keyframes pageIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-.reader.night{background:linear-gradient(180deg,#241d18,#1c1613)}
+.reader.night{background-color:#1c1613;background-image:linear-gradient(180deg,#241d18,#1c1613)}
 .reader.night .reader-bar{background:rgba(36,29,24,.94);border-color:rgba(255,255,255,.09)}
 .reader.night .reader-back{color:#cbbfae}
 .reader.night .reader-back:hover{color:#e8b8a8;background:rgba(232,184,168,.08)}
@@ -253,41 +216,32 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
 .reader.night .text-divider{color:rgba(232,184,168,.55)}
 .reader.night .read-end{color:rgba(232,184,168,.5)}
 .reader.night .reader-progress-fill{background:linear-gradient(90deg,#e8b8a8,#c98d76)}
+.toc-panel{position:sticky;top:0;z-index:9;max-width:820px;margin:0 auto;background:var(--card);border:1px solid rgba(44,44,44,.12);border-top:none;box-shadow:0 16px 34px -18px rgba(20,15,10,.45);max-height:min(60vh,420px);overflow-y:auto;animation:pageIn .25s ease both}
+.toc-head{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;color:#6e5f58;border-bottom:1px solid var(--line);background:var(--card)}
+.toc-close-btn{width:30px;height:30px;border-radius:50%;border:none;background:transparent;color:#7a7267;cursor:pointer;display:grid;place-items:center;transition:background .2s,color .2s}
+.toc-close-btn .ic{width:14px;height:14px}
+.toc-close-btn:hover{background:rgba(139,58,58,.1);color:var(--accent)}
+.toc-list{padding:6px}
+.toc-item{display:block;width:100%;text-align:left;border:none;background:none;padding:10px 14px;border-radius:6px;font-size:.88rem;color:var(--ink);cursor:pointer;transition:background .2s,color .2s}
+.toc-item:hover{background:rgba(139,58,58,.08);color:var(--accent)}
+.toc-empty{padding:16px;font-size:.8rem;color:var(--ink-faint);text-align:center}
+.reader.night .toc-panel{background:#2c241e;border-color:rgba(255,255,255,.12)}
+.reader.night .toc-head{background:#2c241e;border-color:rgba(255,255,255,.1);color:#a99a86}
+.reader.night .toc-close-btn{color:#cbbfae}
+.reader.night .toc-close-btn:hover{background:rgba(232,184,168,.1);color:#e8b8a8}
+.reader.night .toc-item{color:#d6cabb}
+.reader.night .toc-item:hover{background:rgba(232,184,168,.1);color:#e8b8a8}
+.read-canon-tag{text-align:center;font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:10px}
+.reader.night .read-canon-tag{color:#a99a86}
 
 .to-top{position:fixed;z-index:1150;right:max(18px,env(safe-area-inset-right));bottom:max(22px,env(safe-area-inset-bottom));width:46px;height:46px;border-radius:50%;cursor:pointer;border:1px solid rgba(139,58,58,.4);background:var(--card);color:var(--accent);display:grid;place-items:center;box-shadow:0 10px 24px -10px rgba(44,40,35,.4);opacity:0;transform:translateY(12px);pointer-events:none;transition:.3s}
 .to-top .ic{width:18px;height:18px}
 .to-top.visible{opacity:1;transform:none;pointer-events:auto}
 .to-top:hover{background:var(--accent);color:#fdf9f3}
+.remaining-badge{position:fixed;z-index:1150;right:max(74px,calc(env(safe-area-inset-right) + 74px));bottom:max(22px,env(safe-area-inset-bottom));padding:0 16px;height:46px;display:flex;align-items:center;border-radius:999px;background:var(--card);border:1px solid rgba(139,58,58,.3);color:#6e5f58;font-family:'Playfair Display',serif;font-style:italic;font-size:.82rem;white-space:nowrap;box-shadow:0 10px 24px -10px rgba(44,40,35,.4);opacity:0;transform:translateY(12px);pointer-events:none;transition:.3s}
+.remaining-badge.visible{opacity:1;transform:none}
+.remaining-badge.night{background:#2c241e;border-color:rgba(232,184,168,.35);color:#cbbfae}
 
-.editor{position:fixed;inset:0;z-index:1120;background:radial-gradient(1000px 500px at 50% -10%, rgba(139,58,58,.05), transparent 60%),linear-gradient(180deg,#faf6f0,#f5efe5);transform:translateX(100%);visibility:hidden;transition:transform .5s cubic-bezier(.22,.61,.21,1),visibility 0s linear .5s;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-.editor.open{transform:none;visibility:visible;transition:transform .5s cubic-bezier(.22,.61,.21,1)}
-.editor-bar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;background:rgba(250,246,240,.92);border-bottom:1px solid var(--line)}
-.editor-status{flex:1;text-align:center;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px}
-@media(max-width:640px){.editor-status{display:none}}
-.editor-tools{display:flex;gap:8px;margin-left:auto;align-items:center}
-.pv-btn{display:flex;gap:7px;align-items:center;font-family:'Inter',sans-serif;font-size:.75rem;font-weight:600;letter-spacing:.06em;padding:8px 13px;border-radius:6px;border:1px solid rgba(44,44,44,.16);background:var(--card);color:var(--ink-soft);cursor:pointer;transition:.25s}
-.pv-btn .ic{width:15px;height:15px}
-.pv-btn:hover{border-color:rgba(139,58,58,.5);color:var(--accent)}
-.pv-btn.active{background:var(--accent);color:#fdf9f3;border-color:var(--accent)}
-.editor-page{max-width:860px;margin:0 auto;padding:32px 22px 130px}
-.editor.open .editor-page{animation:pageIn .5s .1s cubic-bezier(.22,.61,.3,1) both}
-.draft-bar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:rgba(139,58,58,.07);border:1px dashed rgba(139,58,58,.4);border-radius:6px;padding:10px 14px;margin-bottom:20px;font-size:.8rem;color:#6e5f58}
-.link-act{border:none;background:none;color:var(--accent);font-family:'Inter',sans-serif;font-weight:600;font-size:.78rem;cursor:pointer;padding:2px 0;border-bottom:1px dotted rgba(139,58,58,.6);transition:color .2s}
-.link-act:hover{color:var(--accent-deep)}
-.ed-field{margin-bottom:16px}
-.ed-field label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#7a7267;margin-bottom:8px}
-#edTitle{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:600}
-.editor-toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0 10px;padding:8px;border:1px solid rgba(44,44,44,.12);border-radius:6px;background:rgba(255,253,249,.75)}
-.fmt{min-width:38px;height:34px;padding:0 10px;border-radius:6px;cursor:pointer;border:1px solid rgba(44,44,44,.14);background:var(--card);color:var(--ink-soft);font-family:'Playfair Display',serif;font-size:.95rem;line-height:1;display:grid;place-items:center;transition:.25s}
-.fmt:hover{border-color:rgba(139,58,58,.5);color:var(--accent);background:rgba(139,58,58,.06)}
-.fmt:focus-visible{outline:2px solid var(--accent)}
-.fmt-b{font-weight:700}
-.fmt-i{font-style:italic}
-.fmt-ch{font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.06em}
-.ed-count{margin-left:auto;font-size:.7rem;color:var(--ink-faint);white-space:nowrap;padding-right:4px}
-#editorText{min-height:46vh;line-height:1.8}
-.ed-hint{margin-top:14px;font-size:.66rem;color:var(--ink-faint);letter-spacing:.08em;text-align:center}
-.editor-preview{animation:fadeIn .3s both;padding-top:6px}
 
 .toast{position:fixed;left:50%;bottom:26px;z-index:2200;transform:translate(-50%,16px);background:#2c2c2c;color:#f5efe6;font-size:.82rem;letter-spacing:.05em;padding:11px 22px;border-radius:999px;display:flex;align-items:center;gap:16px;box-shadow:0 12px 30px -10px rgba(20,15,10,.5);opacity:0;pointer-events:none;transition:opacity .35s,transform .35s cubic-bezier(.22,.61,.3,1);max-width:calc(100vw - 40px)}
 .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
@@ -314,6 +268,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
   <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></symbol>
   <symbol id="icon-link" viewBox="0 0 24 24"><path d="M10.5 13.5a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1.2 1.2"/><path d="M13.5 10.5a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1.2-1.2"/></symbol>
   <symbol id="icon-menu" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.5" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="icon-list" viewBox="0 0 24 24"><path d="M9.5 6.5h10"/><path d="M9.5 12h10"/><path d="M9.5 17.5h10"/><path d="M4.5 6.5h.01"/><path d="M4.5 12h.01"/><path d="M4.5 17.5h.01"/></symbol>
   <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4 7 7 0 0 0 20 14.5z"/></symbol>
   <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5 5l1.8 1.8M17.2 17.2L19 19M19 5l-1.8 1.8M6.8 17.2L5 19"/></symbol>
   <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
@@ -344,9 +299,19 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
       <option value="old">Сначала старые</option>
       <option value="az">По названию</option>
     </select>
+    <select id="canonSelect" aria-label="Категория">
+      <option value="all">Все новеллы</option>
+      <option value="canon">Только канон</option>
+      <option value="noncanon">Только не канон</option>
+    </select>
     <button class="chip" id="favFilter" type="button" aria-pressed="false">♥ Избранные</button>
     <button class="chip continue" id="continueBtn" type="button" hidden></button>
     <span class="count" id="countLabel"></span>
+  </div>
+
+  <div class="recent-row" id="recentRow" hidden>
+    <span class="recent-label">Недавно читали</span>
+    <div class="recent-list" id="recentList"></div>
   </div>
 
   <p class="empty" id="emptyNote" hidden>Нет сохранённых новелл</p>
@@ -360,6 +325,9 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
     </button>
     <span class="reader-bar-title" id="readerBarTitle"></span>
     <div class="reader-tools">
+      <button class="tool-btn" id="tocBtn" type="button" aria-label="Оглавление" aria-expanded="false" hidden>
+        <svg class="ic" aria-hidden="true"><use href="#icon-list"></use></svg>
+      </button>
       <button class="tool-btn" id="fontMinus" type="button" aria-label="Уменьшить шрифт">A−</button>
       <button class="tool-btn" id="fontPlus" type="button" aria-label="Увеличить шрифт">A+</button>
       <button class="tool-btn" id="readerFav" type="button" aria-label="В избранное" aria-pressed="false">
@@ -374,10 +342,20 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
     </div>
     <div class="reader-progress" aria-hidden="true"><div class="reader-progress-fill" id="progressFill"></div></div>
   </header>
+  <nav class="toc-panel" id="tocPanel" hidden aria-label="Оглавление">
+    <div class="toc-head">
+      <span>Главы</span>
+      <button class="toc-close-btn" id="tocClose" type="button" aria-label="Закрыть оглавление">
+        <svg class="ic" aria-hidden="true"><use href="#icon-x"></use></svg>
+      </button>
+    </div>
+    <div class="toc-list" id="tocList"></div>
+  </nav>
   <div class="reader-page">
     <p class="read-meta" id="readMeta"></p>
     <h2 class="read-title" id="readTitle"></h2>
     <p class="read-author" id="readAuthor" hidden></p>
+    <p class="read-canon-tag" id="readCanonTag" hidden>Не канон</p>
     <p class="read-desc" id="readDesc" hidden></p>
     <div class="read-rule" aria-hidden="true">❦</div>
     <div class="read-text" id="readText"></div>
@@ -385,6 +363,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 
   </div>
 </section>
 
+<div class="remaining-badge" id="remainingBadge" aria-hidden="true"></div>
 <button class="to-top" id="toTop" type="button" aria-label="К началу">
   <svg class="ic" aria-hidden="true"><use href="#icon-arrow-up"></use></svg>
 </button>
@@ -403,26 +382,32 @@ var MANIFEST_URL = 'novels/manifest.json';
 var SETTINGS_KEY  = 'unknown-touch-settings-v1';
 var PROGRESS_KEY  = 'unknown-touch-progress-v1';
 var FAVORITES_KEY = 'unknown-touch-favorites-v1';
+var HISTORY_KEY    = 'unknown-touch-history-v1';
 
 var novels = [];
 var favoriteSet = loadFavorites();
 var settings = loadSettings();
 var progressMap = loadProgress();
+var historyMap = loadHistory();
 var searchQuery = '';
 var currentNovel = null;
 var readerIsOpen = false;
 var lastFocused = null;
 var toastTimer = null;
 var continueNovel = null;
+var currentTotalMinutes = 0;
 
 var gridEl = document.getElementById('grid');
 var emptyEl = document.getElementById('emptyNote');
 var toolbarEl = document.getElementById('toolbar');
 var searchInput = document.getElementById('searchInput');
 var sortSelect = document.getElementById('sortSelect');
+var canonSelect = document.getElementById('canonSelect');
 var favFilter = document.getElementById('favFilter');
 var continueBtn = document.getElementById('continueBtn');
 var countLabel = document.getElementById('countLabel');
+var recentRow = document.getElementById('recentRow');
+var recentList = document.getElementById('recentList');
 
 var reader = document.getElementById('reader');
 var readerBack = document.getElementById('readerBack');
@@ -432,7 +417,12 @@ var readMeta = document.getElementById('readMeta');
 var readTitle = document.getElementById('readTitle');
 var readDesc = document.getElementById('readDesc');
 var readAuthor = document.getElementById('readAuthor');
+var readCanonTag = document.getElementById('readCanonTag');
 var readText = document.getElementById('readText');
+var tocBtn = document.getElementById('tocBtn');
+var tocPanel = document.getElementById('tocPanel');
+var tocList = document.getElementById('tocList');
+var tocClose = document.getElementById('tocClose');
 var fontMinus = document.getElementById('fontMinus');
 var fontPlus = document.getElementById('fontPlus');
 var readerFav = document.getElementById('readerFav');
@@ -440,6 +430,7 @@ var readerDownload = document.getElementById('readerDownload');
 var themeToggle = document.getElementById('themeToggle');
 var themeUse = document.getElementById('themeUse');
 var toTop = document.getElementById('toTop');
+var remainingBadge = document.getElementById('remainingBadge');
 
 var toast = document.getElementById('toast');
 var toastMsg = document.getElementById('toastMsg');
@@ -450,7 +441,7 @@ var chapterRe = /^глава\s+\S.{0,60}$/i;
 var dividerRe = /^(❦|✦|⁂|\*{3,}|-{3,})$/;
 
 function loadSettings(){
-  var def = {sort:'new', favOnly:false, fontSize:17, readerTheme:'day'};
+  var def = {sort:'new', favOnly:false, fontSize:17, readerTheme:'day', canonFilter:'all'};
   try{
     var raw = localStorage.getItem(SETTINGS_KEY);
     if(!raw) return def;
@@ -459,7 +450,8 @@ function loadSettings(){
       sort: (o.sort==='old'||o.sort==='az') ? o.sort : 'new',
       favOnly: !!o.favOnly,
       fontSize: Math.min(22, Math.max(14, parseInt(o.fontSize,10)||17)),
-      readerTheme: o.readerTheme==='night' ? 'night' : 'day'
+      readerTheme: o.readerTheme==='night' ? 'night' : 'day',
+      canonFilter: (o.canonFilter==='canon'||o.canonFilter==='noncanon') ? o.canonFilter : 'all'
     };
   }catch(err){ return def; }
 }
@@ -480,6 +472,18 @@ function loadFavorites(){
   }catch(err){ return new Set(); }
 }
 function saveFavorites(){ try{ localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favoriteSet))); }catch(err){} }
+function loadHistory(){
+  try{
+    var raw = localStorage.getItem(HISTORY_KEY);
+    var o = raw ? JSON.parse(raw) : {};
+    return (o && typeof o==='object') ? o : {};
+  }catch(err){ return {}; }
+}
+function saveHistory(){ try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(historyMap)); }catch(err){} }
+function markOpened(id){
+  historyMap[id] = Date.now();
+  saveHistory();
+}
 
 function plural(n, forms){
   var a = Math.abs(n)%100, b = a%10;
@@ -530,6 +534,7 @@ function buildBlocks(container, text){
   container.innerHTML = '';
   var firstPara = null;
   var paraLines = [];
+  var chapters = [];
   function flush(){
     if(!paraLines.length) return;
     var p = document.createElement('p');
@@ -556,7 +561,9 @@ function buildBlocks(container, text){
         var h = document.createElement('h3');
         h.className = 'chapter-title';
         h.textContent = t;
+        h.id = 'ch-' + chapters.length;
         container.appendChild(h);
+        chapters.push({ id: h.id, title: t });
         return;
       }
       paraLines.push(t);
@@ -564,6 +571,7 @@ function buildBlocks(container, text){
     flush();
   });
   if(firstPara) firstPara.classList.add('drop-cap');
+  return chapters;
 }
 
 function titleFromFilename(id){
@@ -586,11 +594,14 @@ function parseNovelText(raw, fallbackTitle){
     bodyStart = i;
   }
   var body = lines.slice(bodyStart).join('\n').replace(/\s+$/, '');
+  var canonRaw = (meta.canon || '').toLowerCase().trim();
+  var canon = !['нет','no','false','0','не канон','неканон'].includes(canonRaw);
   return {
     title: meta.title || fallbackTitle,
     description: meta.description || '',
     author: meta.author || '',
     createdAt: meta.createdat || meta.created || meta.date || '',
+    canon: canon,
     text: body
   };
 }
@@ -620,6 +631,7 @@ function loadNovels(){
                 author: String(data.author || ''),
                 createdAt: data.createdAt,
                 updatedAt: data.updatedAt,
+                canon: data.canon !== false,
                 text: String(data.text)
               };
             }else{
@@ -631,6 +643,7 @@ function loadNovels(){
               title: data.title,
               description: data.description || '',
               author: data.author || '',
+              canon: data.canon !== false,
               text: data.text,
               createdAt: toTimestamp(data.createdAt) || toTimestamp(data.updatedAt),
               updatedAt: toTimestamp(data.updatedAt) || toTimestamp(data.createdAt),
@@ -641,6 +654,12 @@ function loadNovels(){
       }));
     })
     .then(function(list){
+      var base = Date.now();
+      list.forEach(function(n, idx){
+        if(!n) return;
+        if(!n.createdAt){ n.createdAt = base + idx; }
+        if(!n.updatedAt){ n.updatedAt = n.createdAt; }
+      });
       novels = list.filter(Boolean);
       render(true);
     })
@@ -654,6 +673,8 @@ function loadNovels(){
 function getVisibleNovels(){
   var list = novels.slice();
   if(settings.favOnly) list = list.filter(function(n){ return n.favorite; });
+  if(settings.canonFilter === 'canon') list = list.filter(function(n){ return n.canon; });
+  else if(settings.canonFilter === 'noncanon') list = list.filter(function(n){ return !n.canon; });
   var q = searchQuery.trim().toLowerCase();
   if(q){
     list = list.filter(function(n){
@@ -671,6 +692,7 @@ function render(animate){
   gridEl.innerHTML = '';
   toolbarEl.hidden = novels.length === 0;
   updateContinue();
+  renderRecent();
   if(novels.length === 0){
     emptyEl.textContent = 'Нет опубликованных новелл';
     emptyEl.hidden = false;
@@ -682,7 +704,7 @@ function render(animate){
     ? novels.length + ' ' + plural(novels.length, ['новелла','новеллы','новелл'])
     : 'Показано ' + list.length + ' из ' + novels.length;
   if(list.length === 0){
-    emptyEl.textContent = searchQuery.trim() ? 'Ничего не найдено' : 'Нет избранных новелл';
+    emptyEl.textContent = searchQuery.trim() ? 'Ничего не найдено' : 'Нет новелл по выбранным фильтрам';
     emptyEl.hidden = false;
     return;
   }
@@ -706,6 +728,27 @@ function updateContinue(){
   }else{
     continueBtn.hidden = true;
   }
+}
+
+function renderRecent(){
+  var ids = Object.keys(historyMap).sort(function(a,b){ return (historyMap[b]||0) - (historyMap[a]||0); });
+  var items = [];
+  for(var i=0; i<ids.length && items.length<6; i++){
+    var n = novels.find(function(x){ return x.id === ids[i]; });
+    if(n) items.push(n);
+  }
+  recentList.innerHTML = '';
+  if(!items.length){ recentRow.hidden = true; return; }
+  recentRow.hidden = false;
+  items.forEach(function(n){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'recent-item';
+    b.textContent = n.title;
+    b.title = n.title;
+    b.addEventListener('click', function(){ openReader(n, b); });
+    recentList.appendChild(b);
+  });
 }
 
 function buildCard(n, idx, animate){
@@ -734,6 +777,13 @@ function buildCard(n, idx, animate){
   fav.setAttribute('aria-label', n.favorite ? 'Убрать из избранного' : 'В избранное');
   fav.addEventListener('click', function(e){ e.stopPropagation(); toggleFavorite(n, fav); });
   card.appendChild(fav);
+
+  if(!n.canon){
+    var tag = document.createElement('span');
+    tag.className = 'card-tag';
+    tag.textContent = 'Не канон';
+    card.appendChild(tag);
+  }
 
   var orn = document.createElement('div');
   orn.className = 'card-orn';
@@ -797,14 +847,53 @@ function toggleFavorite(n, btn){
   if(settings.favOnly && !n.favorite) render(false);
 }
 
+function buildToc(){
+  var headings = readText.querySelectorAll('.chapter-title');
+  tocList.innerHTML = '';
+  tocPanel.hidden = true;
+  tocBtn.setAttribute('aria-expanded', 'false');
+  if(!headings.length){
+    tocBtn.hidden = true;
+    return;
+  }
+  tocBtn.hidden = false;
+  headings.forEach(function(h){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'toc-item';
+    btn.textContent = h.textContent;
+    btn.addEventListener('click', function(){
+      var top = h.offsetTop - 88;
+      reader.scrollTo({ top: Math.max(0, top), behavior:'smooth' });
+      tocPanel.hidden = true;
+      tocBtn.setAttribute('aria-expanded', 'false');
+    });
+    tocList.appendChild(btn);
+  });
+}
+tocBtn.addEventListener('click', function(){
+  var willOpen = tocPanel.hidden;
+  tocPanel.hidden = !willOpen;
+  tocBtn.setAttribute('aria-expanded', String(willOpen));
+});
+tocClose.addEventListener('click', function(){
+  tocPanel.hidden = true;
+  tocBtn.setAttribute('aria-expanded', 'false');
+});
+
 function syncBodyLock(){
   document.body.classList.toggle('locked', readerIsOpen);
 }
 
 function applyReaderTheme(){
   reader.classList.toggle('night', settings.readerTheme === 'night');
+  remainingBadge.classList.toggle('night', settings.readerTheme === 'night');
+  syncHtmlBg();
   themeUse.setAttribute('href', settings.readerTheme === 'night' ? '#icon-sun' : '#icon-moon');
   themeToggle.setAttribute('aria-label', settings.readerTheme === 'night' ? 'Дневной режим' : 'Ночной режим');
+}
+function syncHtmlBg(){
+  document.documentElement.classList.toggle('night-bg', readerIsOpen && settings.readerTheme === 'night');
 }
 themeToggle.addEventListener('click', function(){
   settings.readerTheme = settings.readerTheme === 'night' ? 'day' : 'night';
@@ -816,10 +905,12 @@ themeToggle.addEventListener('click', function(){
 function openReader(n, fromEl){
   currentNovel = n;
   lastFocused = fromEl || document.activeElement;
+  markOpened(n.id);
   fillReader(n, null);
   reader.classList.add('open');
   reader.setAttribute('aria-hidden','false');
   readerIsOpen = true;
+  syncHtmlBg();
   syncBodyLock();
   try{ history.pushState({novelReader:n.id}, ''); }catch(err){}
   setTimeout(function(){ readerBack.focus(); }, 440);
@@ -829,15 +920,18 @@ function fillReader(n, keepPercent){
   readTitle.textContent = n.title;
   if(n.author){ readAuthor.textContent = n.author; readAuthor.hidden = false; }
   else readAuthor.hidden = true;
+  readCanonTag.hidden = !!n.canon;
   if(n.description){ readDesc.textContent = n.description; readDesc.hidden = false; }
   else readDesc.hidden = true;
   var plain = stripInline(n.text);
   var words = wordCount(plain);
+  currentTotalMinutes = readingTime(plain);
   var dateStr = (n.updatedAt || n.createdAt) ? dateFmt.format(new Date(n.updatedAt || n.createdAt)) + '  ·  ' : '';
   readMeta.textContent = dateStr +
-    '≈ ' + readingTime(plain) + ' мин чтения  ·  ' +
+    '≈ ' + currentTotalMinutes + ' мин чтения  ·  ' +
     words + ' ' + plural(words, ['слово','слова','слов']);
   buildBlocks(readText, n.text);
+  buildToc();
   applyFontSize();
   applyReaderTheme();
   updateReaderFavBtn();
@@ -864,6 +958,10 @@ function closeReaderInternal(){
   readerIsOpen = false;
   currentNovel = null;
   toTop.classList.remove('visible');
+  remainingBadge.classList.remove('visible');
+  tocPanel.hidden = true;
+  tocBtn.setAttribute('aria-expanded', 'false');
+  document.documentElement.classList.remove('night-bg');
   syncBodyLock();
   render(false);
   if(lastFocused && document.contains(lastFocused)){
@@ -880,8 +978,17 @@ function currentPercent(){
   return max > 0 ? Math.min(100, Math.round(reader.scrollTop / max * 100)) : 0;
 }
 function updateProgressUI(){
-  progressFill.style.width = currentPercent() + '%';
-  toTop.classList.toggle('visible', readerIsOpen && reader.scrollTop > 500);
+  var percent = currentPercent();
+  progressFill.style.width = percent + '%';
+  var showFloaters = readerIsOpen && reader.scrollTop > 500;
+  toTop.classList.toggle('visible', showFloaters);
+  if(showFloaters && percent < 97 && currentTotalMinutes > 0){
+    var remaining = Math.max(1, Math.round(currentTotalMinutes * (100 - percent) / 100));
+    remainingBadge.textContent = 'Осталось ≈ ' + remaining + ' ' + plural(remaining, ['минута','минуты','минут']);
+    remainingBadge.classList.add('visible');
+  }else{
+    remainingBadge.classList.remove('visible');
+  }
 }
 function flushProgress(){
   if(!currentNovel) return;
@@ -944,6 +1051,7 @@ readerDownload.addEventListener('click', function(){
 });
 
 sortSelect.addEventListener('change', function(){ settings.sort = sortSelect.value; saveSettings(); render(false); });
+canonSelect.addEventListener('change', function(){ settings.canonFilter = canonSelect.value; saveSettings(); render(false); });
 favFilter.addEventListener('click', function(){
   settings.favOnly = !settings.favOnly;
   favFilter.classList.toggle('active', settings.favOnly);
@@ -956,10 +1064,15 @@ searchInput.addEventListener('input', doSearch);
 continueBtn.addEventListener('click', function(){ if(continueNovel) openReader(continueNovel, continueBtn); });
 
 document.addEventListener('keydown', function(e){
-  if(e.key === 'Escape' && readerIsOpen){ e.preventDefault(); requestCloseReader(); }
+  if(e.key === 'Escape' && readerIsOpen){
+    e.preventDefault();
+    if(!tocPanel.hidden){ tocPanel.hidden = true; tocBtn.setAttribute('aria-expanded','false'); return; }
+    requestCloseReader();
+  }
 });
 
 sortSelect.value = settings.sort;
+canonSelect.value = settings.canonFilter;
 favFilter.classList.toggle('active', settings.favOnly);
 favFilter.setAttribute('aria-pressed', settings.favOnly ? 'true' : 'false');
 applyFontSize();
