@@ -1,5 +1,6 @@
 ===
 title: Прикосновение неизвестного: Сбросивший оковы бытия
+description: Предыстория Мате
 author: ZenthWright
 createdAt: 2026-08-10
 ===
