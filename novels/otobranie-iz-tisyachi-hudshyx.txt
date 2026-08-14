@@ -1,5 +1,6 @@
 ===
 title: Прикосновение неизвестного: Отобранные из тысячи худших
+description: Предыстория AdHunters
 author: ZenthWright
 createdAt: 2026-08-10
 ===
