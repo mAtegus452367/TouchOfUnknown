@@ -70,13 +70,27 @@ body::after{
 @media(min-width:680px){.search{flex:1 1 240px}}
 .search .ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:#8a8175;pointer-events:none}
 .search input{width:100%;font-family:'Inter',sans-serif;font-size:1rem;color:var(--ink);background:var(--card);border:1px solid rgba(44,44,44,.18);border-radius:5px;padding:9px 14px 9px 34px;transition:border-color .25s,box-shadow .25s,background-color .35s ease,color .35s ease}
-.toolbar select{
-  appearance:none;-webkit-appearance:none;font-family:'Inter',sans-serif;font-size:1rem;color:var(--ink);
-  background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238b3a3a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;
-  border:1px solid rgba(44,44,44,.18);border-radius:5px;padding:9px 32px 9px 14px;cursor:pointer;
+.dd{position:relative}
+.dd-btn{
+  display:flex;align-items:center;gap:10px;font-family:'Inter',sans-serif;font-size:1rem;color:var(--ink);
+  background:var(--card);border:1px solid rgba(44,44,44,.18);border-radius:5px;padding:9px 14px;cursor:pointer;
   transition:border-color .25s,box-shadow .25s,background-color .35s ease,color .35s ease;
 }
-.search input:focus,.toolbar select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,58,58,.14)}
+.dd-btn:hover{border-color:rgba(139,58,58,.5)}
+.dd-btn:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,58,58,.14)}
+.dd-chevron{width:12px;height:12px;stroke:var(--accent);transition:transform .25s}
+.dd-btn[aria-expanded="true"] .dd-chevron{transform:rotate(180deg)}
+.dd-menu{
+  position:absolute;top:calc(100% + 8px);left:0;z-index:120;min-width:100%;width:max-content;max-width:260px;
+  background:var(--card);border:1px solid rgba(44,44,44,.14);border-radius:8px;padding:6px;
+  box-shadow:0 20px 44px -18px rgba(20,15,10,.5);transform-origin:top left;animation:popIn .18s ease both;
+}
+@keyframes popIn{from{opacity:0;transform:scale(.96) translateY(-4px)}to{opacity:1;transform:none}}
+.dd-item{display:block;width:100%;text-align:left;border:none;background:none;font-family:'Inter',sans-serif;font-size:.86rem;color:var(--ink);cursor:pointer;padding:9px 12px;border-radius:6px;transition:background .2s,color .2s;white-space:nowrap}
+.dd-item:hover{background:rgba(139,58,58,.08);color:var(--accent)}
+.dd-item.active{color:var(--accent);font-weight:600}
+.dd-item.active::after{content:"✓";float:right;margin-left:14px}
+.search input:focus,.dd-btn:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,58,58,.14)}
 .chip{font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.04em;padding:9px 15px;border-radius:999px;border:1px solid rgba(139,58,58,.45);background:transparent;color:var(--accent);cursor:pointer;transition:.25s;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip:hover{background:rgba(139,58,58,.08)}
 .chip.active{background:var(--accent);color:#fdf9f3;border-color:var(--accent);box-shadow:0 6px 14px -6px rgba(139,58,58,.6)}
@@ -250,10 +264,14 @@ body.night .hero-title .w-accent{color:#e8b8a8}
 body.night .hero-sub{color:#9c8f7d}
 body.night .hero-note{color:#8d8070}
 body.night .search input,
-body.night .toolbar select{background:#241d18;color:#d6cabb;border-color:rgba(255,255,255,.14)}
-body.night .toolbar select{background-color:#241d18;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23e8b8a8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")}
+body.night .dd-btn{background:#241d18;color:#d6cabb;border-color:rgba(255,255,255,.14)}
+body.night .dd-chevron{stroke:#e8b8a8}
+body.night .dd-menu{background:#2c241e;border-color:rgba(255,255,255,.12);box-shadow:0 20px 44px -18px rgba(0,0,0,.6)}
+body.night .dd-item{color:#d6cabb}
+body.night .dd-item:hover{background:rgba(232,184,168,.1);color:#e8b8a8}
+body.night .dd-item.active{color:#e8b8a8}
 body.night .search .ic{stroke:#8d8070}
-body.night .search input:focus,body.night .toolbar select:focus{border-color:#c98d76;box-shadow:0 0 0 3px rgba(232,184,168,.16)}
+body.night .search input:focus,body.night .dd-btn:focus-visible{border-color:#c98d76;box-shadow:0 0 0 3px rgba(232,184,168,.16)}
 body.night .chip{border-color:rgba(232,184,168,.4);color:#e8b8a8}
 body.night .chip:hover{background:rgba(232,184,168,.08)}
 body.night .chip.active{background:#c98d76;color:#241d18;border-color:#c98d76}
@@ -297,6 +315,7 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
   <symbol id="icon-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></symbol>
   <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
   <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></symbol>
+  <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
   <symbol id="icon-link" viewBox="0 0 24 24"><path d="M10.5 13.5a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1.2 1.2"/><path d="M13.5 10.5a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1.2-1.2"/></symbol>
   <symbol id="icon-menu" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.5" fill="currentColor" stroke="none"/></symbol>
   <symbol id="icon-list" viewBox="0 0 24 24"><path d="M9.5 6.5h10"/><path d="M9.5 12h10"/><path d="M9.5 17.5h10"/><path d="M4.5 6.5h.01"/><path d="M4.5 12h.01"/><path d="M4.5 17.5h.01"/></symbol>
@@ -329,16 +348,28 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
       <svg class="ic" aria-hidden="true"><use href="#icon-search"></use></svg>
       <input id="searchInput" type="search" placeholder="Поиск" aria-label="Поиск по новеллам">
     </label>
-    <select id="sortSelect" aria-label="Сортировка">
-      <option value="new">Сначала новые</option>
-      <option value="old">Сначала старые</option>
-      <option value="az">По названию</option>
-    </select>
-    <select id="canonSelect" aria-label="Категория">
-      <option value="all">Все новеллы</option>
-      <option value="canon">Только канон</option>
-      <option value="noncanon">Только не канон</option>
-    </select>
+    <div class="dd" id="sortDD">
+      <button class="dd-btn" id="sortDDBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Сортировка">
+        <span id="sortDDLabel">Сначала новые</span>
+        <svg class="ic dd-chevron" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+      </button>
+      <div class="dd-menu" id="sortDDMenu" role="listbox" aria-label="Сортировка" hidden>
+        <button class="dd-item" type="button" data-value="new" role="option" aria-selected="true">Сначала новые</button>
+        <button class="dd-item" type="button" data-value="old" role="option" aria-selected="false">Сначала старые</button>
+        <button class="dd-item" type="button" data-value="az" role="option" aria-selected="false">По названию</button>
+      </div>
+    </div>
+    <div class="dd" id="canonDD">
+      <button class="dd-btn" id="canonDDBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Категория">
+        <span id="canonDDLabel">Все новеллы</span>
+        <svg class="ic dd-chevron" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+      </button>
+      <div class="dd-menu" id="canonDDMenu" role="listbox" aria-label="Категория" hidden>
+        <button class="dd-item" type="button" data-value="all" role="option" aria-selected="true">Все новеллы</button>
+        <button class="dd-item" type="button" data-value="canon" role="option" aria-selected="false">Только канон</button>
+        <button class="dd-item" type="button" data-value="noncanon" role="option" aria-selected="false">Только не канон</button>
+      </div>
+    </div>
     <button class="chip" id="favFilter" type="button" aria-pressed="false">♥ Избранные</button>
     <button class="chip continue" id="continueBtn" type="button" hidden></button>
     <span class="count" id="countLabel"></span>
@@ -442,8 +473,6 @@ var emptyEl = document.getElementById('emptyNote');
 var toolbarEl = document.getElementById('toolbar');
 var loadingGrid = document.getElementById('loadingGrid');
 var searchInput = document.getElementById('searchInput');
-var sortSelect = document.getElementById('sortSelect');
-var canonSelect = document.getElementById('canonSelect');
 var favFilter = document.getElementById('favFilter');
 var continueBtn = document.getElementById('continueBtn');
 var countLabel = document.getElementById('countLabel');
@@ -1094,8 +1123,63 @@ readerDownload.addEventListener('click', function(){
   showToast('Файл сохранён');
 });
 
-sortSelect.addEventListener('change', function(){ settings.sort = sortSelect.value; saveSettings(); render(false); });
-canonSelect.addEventListener('change', function(){ settings.canonFilter = canonSelect.value; saveSettings(); render(false); });
+var activeDropdowns = [];
+function setupDropdown(rootId, btnId, menuId, labelId, onChange){
+  var root = document.getElementById(rootId);
+  var btn = document.getElementById(btnId);
+  var menu = document.getElementById(menuId);
+  var label = document.getElementById(labelId);
+  var items = Array.prototype.slice.call(menu.querySelectorAll('.dd-item'));
+  function close(){
+    if(menu.hidden) return;
+    menu.hidden = true;
+    btn.setAttribute('aria-expanded','false');
+  }
+  function open(){
+    closeAllDropdowns(root);
+    menu.hidden = false;
+    btn.setAttribute('aria-expanded','true');
+  }
+  function setValue(val, fire){
+    items.forEach(function(it){
+      var active = it.getAttribute('data-value') === val;
+      it.classList.toggle('active', active);
+      it.setAttribute('aria-selected', String(active));
+      if(active) label.textContent = it.textContent;
+    });
+    if(fire) onChange(val);
+  }
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    if(menu.hidden) open(); else close();
+  });
+  items.forEach(function(it){
+    it.addEventListener('click', function(){
+      setValue(it.getAttribute('data-value'), true);
+      close();
+      btn.focus();
+    });
+  });
+  activeDropdowns.push({ root: root, close: close });
+  return { setValue: setValue, close: close };
+}
+function closeAllDropdowns(exceptRoot){
+  activeDropdowns.forEach(function(d){
+    if(d.root !== exceptRoot) d.close();
+  });
+}
+document.addEventListener('click', function(){ closeAllDropdowns(); });
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeAllDropdowns();
+});
+
+var sortDD = setupDropdown('sortDD','sortDDBtn','sortDDMenu','sortDDLabel', function(val){
+  settings.sort = val; saveSettings(); render(false);
+});
+var canonDD = setupDropdown('canonDD','canonDDBtn','canonDDMenu','canonDDLabel', function(val){
+  settings.canonFilter = val; saveSettings(); render(false);
+});
+
 favFilter.addEventListener('click', function(){
   settings.favOnly = !settings.favOnly;
   favFilter.classList.toggle('active', settings.favOnly);
@@ -1115,8 +1199,8 @@ document.addEventListener('keydown', function(e){
   }
 });
 
-sortSelect.value = settings.sort;
-canonSelect.value = settings.canonFilter;
+sortDD.setValue(settings.sort, false);
+canonDD.setValue(settings.canonFilter, false);
 favFilter.classList.toggle('active', settings.favOnly);
 favFilter.setAttribute('aria-pressed', settings.favOnly ? 'true' : 'false');
 applyFontSize();
