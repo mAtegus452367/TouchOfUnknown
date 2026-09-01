@@ -1,6 +1,7 @@
 ===
 title: Прикосновение неизвестного: Чертёж непобедимого разума
 description: Предыстория Assiste
+canon: yes
 author: ZenthWright
 createdAt: 2026-08-15
 ===
