@@ -130,6 +130,7 @@ body.night .loading-card{background:rgba(232,184,168,.07);border-color:rgba(255,
 .card-author{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:-6px}
 .card-tag{position:absolute;top:8px;left:44px;z-index:1;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);background:rgba(44,44,44,.07);border:1px solid rgba(44,44,44,.14);border-radius:999px;padding:4px 10px}
 .card-tag.canon{color:var(--accent);background:rgba(139,58,58,.07);border-color:rgba(139,58,58,.2)}
+.card-tag.canon-main{color:#fdf9f3;background:var(--accent);border-color:var(--accent)}
 .recent-row{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap;animation:fadeIn .5s both}
 .recent-label{font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap}
 .recent-list{display:flex;gap:8px;flex-wrap:wrap;flex:1}
@@ -231,8 +232,10 @@ body.night .loading-card{background:rgba(232,184,168,.07);border-color:rgba(255,
 .reader-shell.night .toc-item:hover{background:rgba(232,184,168,.1);color:#e8b8a8}
 .read-canon-tag{text-align:center;font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:10px}
 .read-canon-tag.canon{color:var(--accent)}
+.read-canon-tag.canon-main{color:var(--accent);font-weight:800}
 .reader-shell.night .read-canon-tag{color:#a99a86}
 .reader-shell.night .read-canon-tag.canon{color:#e8b8a8}
+.reader-shell.night .read-canon-tag.canon-main{color:#e8b8a8}
 
 .to-top{position:fixed;z-index:1150;right:max(18px,env(safe-area-inset-right));bottom:max(22px,env(safe-area-inset-bottom));width:46px;height:46px;border-radius:50%;cursor:pointer;border:1px solid rgba(139,58,58,.4);background:var(--card);color:var(--accent);display:grid;place-items:center;box-shadow:0 10px 24px -10px rgba(44,40,35,.4);opacity:0;transform:translateY(12px);pointer-events:none;transition:.3s}
 .to-top .ic{width:18px;height:18px}
@@ -280,6 +283,7 @@ body.night .card-title{color:#e9ddcb}
 body.night .card-author{color:#e8b8a8}
 body.night .card-tag{background:rgba(232,184,168,.08);border-color:rgba(232,184,168,.25);color:#a99a86}
 body.night .card-tag.canon{color:#e8b8a8;background:rgba(232,184,168,.12);border-color:rgba(232,184,168,.35)}
+body.night .card-tag.canon-main{color:#241d18;background:#e8b8a8;border-color:#e8b8a8}
 body.night .card-progress-label{color:#8d8070}
 body.night .card-desc{color:#a99a86}
 body.night .card-preview{color:#b3a48e}
@@ -361,8 +365,9 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
       </button>
       <div class="dd-menu" id="canonDDMenu" role="listbox" aria-label="Категория" hidden>
         <button class="dd-item" type="button" data-value="all" role="option" aria-selected="true">Все новеллы</button>
-        <button class="dd-item" type="button" data-value="canon" role="option" aria-selected="false">Только канон</button>
-        <button class="dd-item" type="button" data-value="noncanon" role="option" aria-selected="false">Только не канон</button>
+        <button class="dd-item" type="button" data-value="canon" role="option" aria-selected="false">Канон</button>
+        <button class="dd-item" type="button" data-value="canon-main" role="option" aria-selected="false">Канон + продолжение</button>
+        <button class="dd-item" type="button" data-value="noncanon" role="option" aria-selected="false">Не канон</button>
       </div>
     </div>
     <button class="chip" id="favFilter" type="button" aria-pressed="false">♥ Избранные</button>
@@ -524,7 +529,7 @@ function loadSettings(){
       favOnly: !!o.favOnly,
       fontSize: Math.min(22, Math.max(14, parseInt(o.fontSize,10)||17)),
       theme: themeVal==='night' ? 'night' : 'day',
-      canonFilter: (o.canonFilter==='canon'||o.canonFilter==='noncanon') ? o.canonFilter : 'all'
+      canonFilter: ['canon','canon-main','noncanon'].indexOf(o.canonFilter) !== -1 ? o.canonFilter : 'all'
     };
   }catch(err){ return def; }
 }
@@ -652,6 +657,18 @@ function titleFromFilename(id){
   return s.replace(/(^|\s)([a-zA-Zа-яёА-ЯЁ0-9])/g, function(m, sp, ch){ return sp + ch.toUpperCase(); });
 }
 
+function canonCategory(raw){
+  var v = (raw || '').toLowerCase().trim();
+  if(['нет','no','false','0','не канон','неканон'].includes(v)) return 'noncanon';
+  if(['продолжение','main','sequel','канон+продолжение','канон + продолжение','основной сюжет','продолжение основного сюжета'].includes(v)) return 'canon-main';
+  return 'canon';
+}
+function canonLabel(category){
+  if(category === 'canon-main') return 'Канон + продолжение';
+  if(category === 'canon') return 'Канон';
+  return 'Не канон';
+}
+
 function parseNovelText(raw, fallbackTitle){
   var lines = raw.replace(/^\uFEFF/, '').split(/\r\n|\r|\n/);
   var meta = {};
@@ -667,14 +684,12 @@ function parseNovelText(raw, fallbackTitle){
     bodyStart = i;
   }
   var body = lines.slice(bodyStart).join('\n').replace(/\s+$/, '');
-  var canonRaw = (meta.canon || '').toLowerCase().trim();
-  var canon = !['нет','no','false','0','не канон','неканон'].includes(canonRaw);
   return {
     title: meta.title || fallbackTitle,
     description: meta.description || '',
     author: meta.author || '',
     createdAt: meta.createdat || meta.created || meta.date || '',
-    canon: canon,
+    category: canonCategory(meta.canon),
     text: body
   };
 }
@@ -700,13 +715,14 @@ function loadNovels(){
             if(isJson){
               try{ data = JSON.parse(raw); }catch(e){ return null; }
               if(!data || !data.title || !data.text) return null;
+              var jsonCategory = data.canon === false ? 'noncanon' : (typeof data.canon === 'string' ? canonCategory(data.canon) : 'canon');
               data = {
                 title: String(data.title),
                 description: String(data.description || ''),
                 author: String(data.author || ''),
                 createdAt: data.createdAt,
                 updatedAt: data.updatedAt,
-                canon: data.canon !== false,
+                category: jsonCategory,
                 text: String(data.text)
               };
             }else{
@@ -718,7 +734,7 @@ function loadNovels(){
               title: data.title,
               description: data.description || '',
               author: data.author || '',
-              canon: data.canon !== false,
+              category: data.category || 'canon',
               text: data.text,
               createdAt: toTimestamp(data.createdAt) || toTimestamp(data.updatedAt),
               updatedAt: toTimestamp(data.updatedAt) || toTimestamp(data.createdAt),
@@ -751,8 +767,7 @@ function loadNovels(){
 function getVisibleNovels(){
   var list = novels.slice();
   if(settings.favOnly) list = list.filter(function(n){ return n.favorite; });
-  if(settings.canonFilter === 'canon') list = list.filter(function(n){ return n.canon; });
-  else if(settings.canonFilter === 'noncanon') list = list.filter(function(n){ return !n.canon; });
+  if(settings.canonFilter !== 'all') list = list.filter(function(n){ return n.category === settings.canonFilter; });
   var q = searchQuery.trim().toLowerCase();
   if(q){
     list = list.filter(function(n){
@@ -863,8 +878,8 @@ function buildCard(n, idx, animate){
   card.appendChild(fav);
 
   var tag = document.createElement('span');
-  tag.className = 'card-tag' + (n.canon ? ' canon' : '');
-  tag.textContent = n.canon ? 'Канон' : 'Не канон';
+  tag.className = 'card-tag' + (n.category === 'canon' ? ' canon' : n.category === 'canon-main' ? ' canon-main' : '');
+  tag.textContent = canonLabel(n.category);
   card.appendChild(tag);
 
   var orn = document.createElement('div');
@@ -1001,8 +1016,9 @@ function fillReader(n, keepPercent){
   readTitle.textContent = n.title;
   if(n.author){ readAuthor.textContent = n.author; readAuthor.hidden = false; }
   else readAuthor.hidden = true;
-  readCanonTag.textContent = n.canon ? 'Канон' : 'Не канон';
-  readCanonTag.classList.toggle('canon', !!n.canon);
+  readCanonTag.textContent = canonLabel(n.category);
+  readCanonTag.classList.toggle('canon', n.category === 'canon');
+  readCanonTag.classList.toggle('canon-main', n.category === 'canon-main');
   readCanonTag.hidden = false;
   if(n.description){ readDesc.textContent = n.description; readDesc.hidden = false; }
   else readDesc.hidden = true;
