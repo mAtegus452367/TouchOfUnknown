@@ -77,6 +77,7 @@ body.night .about-text{color:#9c8f7d}
   background:var(--card);border:1px solid rgba(44,44,44,.18);border-radius:5px;padding:9px 14px;cursor:pointer;
   transition:border-color .25s,box-shadow .25s,background-color .35s ease,color .35s ease;
 }
+.dd-label{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dd-btn:hover{border-color:rgba(139,58,58,.5)}
 .dd-btn:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,58,58,.14)}
 .dd-chevron{width:12px;height:12px;stroke:var(--accent);transition:transform .25s}
@@ -87,7 +88,7 @@ body.night .about-text{color:#9c8f7d}
   box-shadow:0 20px 44px -18px rgba(20,15,10,.5);transform-origin:top left;animation:popIn .18s ease both;
 }
 @keyframes popIn{from{opacity:0;transform:scale(.96) translateY(-4px)}to{opacity:1;transform:none}}
-.dd-item{display:block;width:100%;text-align:left;border:none;background:none;font-family:'Inter',sans-serif;font-size:.86rem;color:var(--ink);cursor:pointer;padding:9px 12px;border-radius:6px;transition:background .2s,color .2s;white-space:nowrap}
+.dd-item{display:block;width:100%;text-align:left;border:none;background:none;font-family:'Inter',sans-serif;font-size:.86rem;color:var(--ink);cursor:pointer;padding:9px 12px;border-radius:6px;transition:background .2s,color .2s}
 .dd-item:hover{background:rgba(139,58,58,.08);color:var(--accent)}
 .dd-item.active{color:var(--accent);font-weight:600}
 .dd-item.active::after{content:"✓";float:right;margin-left:14px}
@@ -128,7 +129,7 @@ body.night .loading-card{background:rgba(232,184,168,.07);border-color:rgba(255,
 .card:hover .card-title{color:var(--accent-deep)}
 .card-desc{font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;line-height:1.5;color:#6e5f58}
 .card-author{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:-6px}
-.card-tag{position:absolute;top:8px;left:44px;z-index:1;font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);background:rgba(44,44,44,.07);border:1px solid rgba(44,44,44,.14);border-radius:999px;padding:4px 10px}
+.card-tag{display:inline-block;max-width:100%;font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);background:rgba(44,44,44,.07);border:1px solid rgba(44,44,44,.14);border-radius:999px;padding:4px 10px;margin-bottom:2px;white-space:normal;line-height:1.4}
 .card-tag.canon{color:var(--accent);background:rgba(139,58,58,.07);border-color:rgba(139,58,58,.2)}
 .card-tag.canon-main{color:#fdf9f3;background:var(--accent);border-color:var(--accent)}
 .recent-row{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap;animation:fadeIn .5s both}
@@ -347,7 +348,7 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
     </label>
     <div class="dd" id="sortDD">
       <button class="dd-btn" id="sortDDBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Сортировка">
-        <span id="sortDDLabel">Сначала новые</span>
+        <span class="dd-label" id="sortDDLabel">Сначала новые</span>
         <svg class="ic dd-chevron" aria-hidden="true"><use href="#icon-chevron"></use></svg>
       </button>
       <div class="dd-menu" id="sortDDMenu" role="listbox" aria-label="Сортировка" hidden>
@@ -360,13 +361,13 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
     </div>
     <div class="dd" id="canonDD">
       <button class="dd-btn" id="canonDDBtn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Категория">
-        <span id="canonDDLabel">Все новеллы</span>
+        <span class="dd-label" id="canonDDLabel">Все новеллы</span>
         <svg class="ic dd-chevron" aria-hidden="true"><use href="#icon-chevron"></use></svg>
       </button>
       <div class="dd-menu" id="canonDDMenu" role="listbox" aria-label="Категория" hidden>
         <button class="dd-item" type="button" data-value="all" role="option" aria-selected="true">Все новеллы</button>
         <button class="dd-item" type="button" data-value="canon" role="option" aria-selected="false">Канон</button>
-        <button class="dd-item" type="button" data-value="canon-main" role="option" aria-selected="false">Канон + продолжение</button>
+        <button class="dd-item" type="button" data-value="canon-main" role="option" aria-selected="false">Канон + продолжение основного сюжета</button>
         <button class="dd-item" type="button" data-value="noncanon" role="option" aria-selected="false">Не канон</button>
       </div>
     </div>
@@ -664,7 +665,7 @@ function canonCategory(raw){
   return 'canon';
 }
 function canonLabel(category){
-  if(category === 'canon-main') return 'Канон + продолжение';
+  if(category === 'canon-main') return 'Канон + продолжение основного сюжета';
   if(category === 'canon') return 'Канон';
   return 'Не канон';
 }
@@ -877,16 +878,16 @@ function buildCard(n, idx, animate){
   fav.addEventListener('click', function(e){ e.stopPropagation(); toggleFavorite(n, fav); });
   card.appendChild(fav);
 
-  var tag = document.createElement('span');
-  tag.className = 'card-tag' + (n.category === 'canon' ? ' canon' : n.category === 'canon-main' ? ' canon-main' : '');
-  tag.textContent = canonLabel(n.category);
-  card.appendChild(tag);
-
   var orn = document.createElement('div');
   orn.className = 'card-orn';
   orn.textContent = '❦';
   orn.setAttribute('aria-hidden','true');
   card.appendChild(orn);
+
+  var tag = document.createElement('span');
+  tag.className = 'card-tag' + (n.category === 'canon' ? ' canon' : n.category === 'canon-main' ? ' canon-main' : '');
+  tag.textContent = canonLabel(n.category);
+  card.appendChild(tag);
 
   var h = document.createElement('h3');
   h.className = 'card-title';
