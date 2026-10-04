@@ -65,7 +65,29 @@ body.night .about-text{color:#9c8f7d}
 .theme-btn .ic{width:18px;height:18px}
 .theme-btn.pop{animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
 
+.view-tabs{display:flex;justify-content:center;gap:8px;max-width:1120px;margin:0 auto;padding:0 20px 22px}
+.view-tab{font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.06em;color:var(--ink-faint);background:none;border:none;border-bottom:2px solid transparent;padding:8px 4px;cursor:pointer;transition:color .2s,border-color .2s}
+.view-tab:hover{color:var(--ink)}
+.view-tab.active{color:var(--accent);border-color:var(--accent)}
 .library{max-width:1120px;margin:0 auto;padding:6px 20px 130px}
+.updates-view{max-width:760px;margin:0 auto;padding:6px 20px 130px}
+.updates-loading{display:flex;flex-direction:column;gap:16px}
+.updates-loading .loading-card{height:90px}
+.updates-list{display:flex;flex-direction:column;gap:0}
+.update-item{position:relative;padding:4px 0 26px 28px;border-left:1px solid rgba(44,44,44,.14)}
+.update-item:last-child{border-color:transparent}
+.update-item::before{content:"";position:absolute;left:-5px;top:7px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.update-date{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px}
+.update-title{font-family:'Playfair Display',serif;font-weight:600;font-size:1.15rem;margin-bottom:8px;color:var(--ink)}
+.update-text{font-size:.92rem;line-height:1.65;color:var(--ink-soft);white-space:pre-line}
+body.night .view-tab{color:#8d8070}
+body.night .view-tab:hover{color:#d6cabb}
+body.night .view-tab.active{color:#e8b8a8;border-color:#e8b8a8}
+body.night .update-item{border-color:rgba(255,255,255,.12)}
+body.night .update-item::before{background:#c98d76}
+body.night .update-date{color:#8d8070}
+body.night .update-title{color:#e9ddcb}
+body.night .update-text{color:#b3a48e}
 .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:26px;animation:fadeIn .5s both;position:relative;z-index:50}
 .search{position:relative;display:flex;flex:1 1 100%}
 @media(min-width:680px){.search{flex:1 1 240px}}
@@ -340,7 +362,12 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
   <p class="hero-sub">Библиотека новелл</p>
 </header>
 
-<main class="library">
+<nav class="view-tabs" aria-label="Разделы">
+  <button class="view-tab active" id="tabLibrary" type="button" data-view="library" aria-pressed="true">Новеллы</button>
+  <button class="view-tab" id="tabUpdates" type="button" data-view="updates" aria-pressed="false">Обновления</button>
+</nav>
+
+<main class="library" id="libraryView">
   <div class="toolbar" id="toolbar" hidden>
     <label class="search">
       <svg class="ic" aria-hidden="true"><use href="#icon-search"></use></svg>
@@ -391,6 +418,15 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
   <div class="grid" id="grid"></div>
 </main>
 
+<section class="updates-view" id="updatesView" hidden>
+  <div class="updates-loading" id="updatesLoading" hidden>
+    <div class="loading-card"></div>
+    <div class="loading-card"></div>
+  </div>
+  <p class="empty" id="updatesEmpty" hidden><span class="empty-orn" aria-hidden="true">❦</span>Список обновлений пока пуст</p>
+  <div class="updates-list" id="updatesList"></div>
+</section>
+
 <footer class="about-footer">
   <div class="about-rule" aria-hidden="true">❦</div>
   <p class="about-title">О проекте</p>
@@ -412,6 +448,9 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
       <button class="tool-btn" id="fontPlus" type="button" aria-label="Увеличить шрифт">A+</button>
       <button class="tool-btn" id="readerFav" type="button" aria-label="В избранное" aria-pressed="false">
         <svg class="ic" aria-hidden="true"><use href="#icon-heart"></use></svg>
+      </button>
+      <button class="tool-btn" id="readerShare" type="button" aria-label="Скопировать ссылку на новеллу">
+        <svg class="ic" aria-hidden="true"><use href="#icon-link"></use></svg>
       </button>
       <button class="tool-btn" id="readerDownload" type="button" aria-label="Скачать как txt">
         <svg class="ic" aria-hidden="true"><use href="#icon-download"></use></svg>
@@ -479,6 +518,13 @@ var gridEl = document.getElementById('grid');
 var emptyEl = document.getElementById('emptyNote');
 var toolbarEl = document.getElementById('toolbar');
 var loadingGrid = document.getElementById('loadingGrid');
+var libraryView = document.getElementById('libraryView');
+var updatesView = document.getElementById('updatesView');
+var tabLibrary = document.getElementById('tabLibrary');
+var tabUpdates = document.getElementById('tabUpdates');
+var updatesLoading = document.getElementById('updatesLoading');
+var updatesEmpty = document.getElementById('updatesEmpty');
+var updatesList = document.getElementById('updatesList');
 var searchInput = document.getElementById('searchInput');
 var favFilter = document.getElementById('favFilter');
 var continueBtn = document.getElementById('continueBtn');
@@ -505,6 +551,7 @@ var fontMinus = document.getElementById('fontMinus');
 var fontPlus = document.getElementById('fontPlus');
 var readerFav = document.getElementById('readerFav');
 var readerDownload = document.getElementById('readerDownload');
+var readerShare = document.getElementById('readerShare');
 var siteThemeToggle = document.getElementById('siteThemeToggle');
 var siteThemeUse = document.getElementById('siteThemeUse');
 var toTop = document.getElementById('toTop');
@@ -695,6 +742,74 @@ function parseNovelText(raw, fallbackTitle){
   };
 }
 
+var UPDATES_URL = 'updates.json';
+var updatesLoaded = false;
+var updateDateFmt = new Intl.DateTimeFormat('ru-RU', {day:'numeric', month:'long', year:'numeric'});
+function formatUpdateDate(v){
+  var t = toTimestamp(v);
+  if(!t) return '';
+  try{ return updateDateFmt.format(new Date(t)); }catch(err){ return ''; }
+}
+function renderUpdates(list){
+  updatesList.innerHTML = '';
+  if(!list.length){
+    updatesEmpty.hidden = false;
+    return;
+  }
+  updatesEmpty.hidden = true;
+  list.forEach(function(u){
+    var item = document.createElement('article');
+    item.className = 'update-item';
+    var dateStr = formatUpdateDate(u.date);
+    if(dateStr){
+      var dateEl = document.createElement('p');
+      dateEl.className = 'update-date';
+      dateEl.textContent = dateStr;
+      item.appendChild(dateEl);
+    }
+    var titleEl = document.createElement('h3');
+    titleEl.className = 'update-title';
+    titleEl.textContent = String(u.title || '');
+    item.appendChild(titleEl);
+    if(u.text){
+      var textEl = document.createElement('p');
+      textEl.className = 'update-text';
+      textEl.textContent = String(u.text);
+      item.appendChild(textEl);
+    }
+    updatesList.appendChild(item);
+  });
+}
+function loadUpdatesIfNeeded(){
+  if(updatesLoaded) return;
+  updatesLoaded = true;
+  updatesLoading.hidden = false;
+  fetch(UPDATES_URL, { cache:'no-cache' })
+    .then(function(r){ return r.ok ? r.json() : []; })
+    .then(function(list){
+      if(!Array.isArray(list)) list = [];
+      updatesLoading.hidden = true;
+      renderUpdates(list);
+    })
+    .catch(function(){
+      updatesLoading.hidden = true;
+      renderUpdates([]);
+      showToast('Не удалось загрузить список обновлений (updates.json)');
+    });
+}
+function switchView(view){
+  var isLibrary = view !== 'updates';
+  libraryView.hidden = !isLibrary;
+  updatesView.hidden = isLibrary;
+  tabLibrary.classList.toggle('active', isLibrary);
+  tabLibrary.setAttribute('aria-pressed', String(isLibrary));
+  tabUpdates.classList.toggle('active', !isLibrary);
+  tabUpdates.setAttribute('aria-pressed', String(!isLibrary));
+  if(!isLibrary) loadUpdatesIfNeeded();
+}
+tabLibrary.addEventListener('click', function(){ switchView('library'); });
+tabUpdates.addEventListener('click', function(){ switchView('updates'); });
+
 function loadNovels(){
   loadingGrid.classList.add('active');
   emptyEl.hidden = true;
@@ -756,6 +871,7 @@ function loadNovels(){
       novels = list.filter(Boolean);
       loadingGrid.classList.remove('active');
       render(true);
+      tryOpenFromHash();
     })
     .catch(function(){
       novels = [];
@@ -1000,7 +1116,7 @@ siteThemeToggle.addEventListener('click', function(){
   siteThemeToggle.classList.remove('pop'); void siteThemeToggle.offsetWidth; siteThemeToggle.classList.add('pop');
 });
 
-function openReader(n, fromEl){
+function openReader(n, fromEl, skipPush){
   currentNovel = n;
   lastFocused = fromEl || document.activeElement;
   markOpened(n.id);
@@ -1009,8 +1125,53 @@ function openReader(n, fromEl){
   readerShell.setAttribute('aria-hidden','false');
   readerIsOpen = true;
   syncBodyLock();
-  try{ history.pushState({novelReader:n.id}, ''); }catch(err){}
+  if(!skipPush){
+    try{ history.pushState({novelReader:n.id}, '', '#' + encodeURIComponent(n.id)); }catch(err){}
+  }
   setTimeout(function(){ readerBack.focus(); }, 440);
+}
+function novelShareUrl(n){
+  return location.origin + location.pathname + location.search + '#' + encodeURIComponent(n.id);
+}
+function copyToClipboard(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text);
+  }
+  return new Promise(function(resolve, reject){
+    try{
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if(ok) resolve(); else reject();
+    }catch(err){ reject(err); }
+  });
+}
+function openNovelById(id, skipPush){
+  for(var i=0;i<novels.length;i++){
+    if(novels[i].id === id){
+      openReader(novels[i], null, skipPush);
+      return true;
+    }
+  }
+  return false;
+}
+function tryOpenFromHash(){
+  var raw = location.hash.replace(/^#/, '');
+  if(!raw) return;
+  var id;
+  try{ id = decodeURIComponent(raw); }catch(err){ id = raw; }
+  try{ history.replaceState({}, '', location.pathname + location.search); }catch(err){}
+  var opened = openNovelById(id, true);
+  if(opened){
+    try{ history.pushState({novelReader:id}, '', '#' + encodeURIComponent(id)); }catch(err){}
+  }else{
+    showToast('Новелла по этой ссылке не найдена');
+  }
 }
 function fillReader(n, keepPercent){
   readerBarTitle.textContent = n.title;
@@ -1131,6 +1292,13 @@ function updateReaderFavBtn(){
 }
 readerFav.addEventListener('click', function(){
   if(currentNovel) toggleFavorite(currentNovel, readerFav);
+});
+readerShare.addEventListener('click', function(){
+  if(!currentNovel) return;
+  copyToClipboard(novelShareUrl(currentNovel)).then(
+    function(){ showToast('Ссылка скопирована'); },
+    function(){ showToast('Не удалось скопировать ссылку'); }
+  );
 });
 readerDownload.addEventListener('click', function(){
   if(!currentNovel) return;
