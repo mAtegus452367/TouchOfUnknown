@@ -64,6 +64,58 @@ body.night .about-text{color:#9c8f7d}
 .theme-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .theme-btn .ic{width:18px;height:18px}
 .theme-btn.pop{animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+.settings-btn{right:64px}
+
+.overlay{position:fixed;inset:0;z-index:1300;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(30,23,18,.55);opacity:0;visibility:hidden;transition:opacity .25s ease,visibility 0s linear .25s}
+.overlay.open{opacity:1;visibility:visible;transition:opacity .25s ease}
+.settings-modal{position:relative;width:100%;max-width:420px;background:var(--card);border:1px solid rgba(44,44,44,.1);border-radius:10px;padding:30px 26px 26px;box-shadow:0 30px 70px -20px rgba(20,15,10,.5);transform:translateY(14px) scale(.98);opacity:0;transition:transform .3s cubic-bezier(.22,.61,.3,1),opacity .25s}
+.overlay.open .settings-modal{transform:none;opacity:1}
+.settings-close{position:absolute;top:14px;right:14px}
+.settings-title{font-family:'Playfair Display',serif;font-weight:600;font-size:1.3rem;margin-bottom:22px}
+.settings-field{margin-bottom:20px}
+.settings-field label{display:block;font-size:.78rem;font-weight:600;letter-spacing:.03em;color:var(--ink-soft);margin-bottom:8px}
+.settings-field input[type=number]{width:100px;padding:8px 10px;border:1px solid rgba(44,44,44,.2);border-radius:6px;font-size:.95rem;font-family:'Inter',sans-serif;color:var(--ink);background:var(--card)}
+.settings-field input[type=number]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,58,58,.14)}
+
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.switch-row:last-of-type{border-bottom:none}
+.switch-row span{font-size:.88rem;color:var(--ink)}
+.switch-row small{display:block;font-size:.74rem;color:var(--ink-faint);margin-top:3px;font-weight:400}
+.switch{position:relative;display:inline-block;width:42px;height:24px;flex:none}
+.switch input{position:absolute;opacity:0;width:1px;height:1px}
+.switch-track{position:absolute;inset:0;background:rgba(44,44,44,.2);border-radius:999px;transition:background .2s}
+.switch-track::before{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.switch input:checked ~ .switch-track{background:var(--accent)}
+.switch input:checked ~ .switch-track::before{transform:translateX(18px)}
+.switch input:focus-visible ~ .switch-track{outline:2px solid var(--accent);outline-offset:2px}
+.settings-reset-btn{width:100%;margin-top:6px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;color:var(--danger);background:rgba(179,64,46,.07);border:1px solid rgba(179,64,46,.25);border-radius:6px;padding:11px;cursor:pointer;transition:background .2s}
+.settings-reset-btn:hover{background:rgba(179,64,46,.14)}
+
+body.night .settings-modal{background:#2c241e;border-color:rgba(255,255,255,.1)}
+body.night .settings-title{color:#e9ddcb}
+body.night .settings-field label{color:#b3a48e}
+body.night .settings-field input[type=number]{background:#241d18;color:#d6cabb;border-color:rgba(255,255,255,.14)}
+body.night .switch-row{border-color:rgba(255,255,255,.1)}
+body.night .switch-row span{color:#d6cabb}
+body.night .switch-row small{color:#8d8070}
+body.night .switch-track{background:rgba(255,255,255,.14)}
+body.night .switch input:checked ~ .switch-track{background:#c98d76}
+body.night .settings-close{color:#cbbfae}
+body.night .settings-close:hover{background:rgba(232,184,168,.1);color:#e8b8a8}
+body.night .settings-reset-btn{color:#e8907a;background:rgba(232,144,122,.08);border-color:rgba(232,144,122,.3)}
+body.night .settings-reset-btn:hover{background:rgba(232,144,122,.15)}
+
+.atmosphere-layer{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.atmosphere-particle{position:absolute;top:-8%;will-change:transform,opacity;animation:atmosphereFall linear infinite}
+@keyframes atmosphereFall{
+  0%{transform:translate(0,0);opacity:0}
+  8%{opacity:var(--op,.6)}
+  92%{opacity:var(--op,.6)}
+  100%{transform:translate(var(--drift,20px),115vh);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .atmosphere-particle{display:none}
+}
 
 .view-tabs{display:flex;justify-content:center;gap:8px;max-width:1120px;margin:0 auto;padding:0 20px 22px}
 .view-tab{font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.06em;color:var(--ink-faint);background:none;border:none;border-bottom:2px solid transparent;padding:8px 4px;cursor:pointer;transition:color .2s,border-color .2s}
@@ -321,6 +373,7 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 }
+body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 </style>
 </head>
 <body>
@@ -337,6 +390,7 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
   <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
   <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></symbol>
   <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="icon-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.5v2.2M12 18.3v2.2M20.5 12h-2.2M5.7 12H3.5M17.7 6.3l-1.5 1.5M7.8 16.2l-1.5 1.5M17.7 17.7l-1.5-1.5M7.8 7.8L6.3 6.3"/></symbol>
   <symbol id="icon-link" viewBox="0 0 24 24"><path d="M10.5 13.5a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1.2 1.2"/><path d="M13.5 10.5a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1.2-1.2"/></symbol>
   <symbol id="icon-menu" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.5" fill="currentColor" stroke="none"/></symbol>
   <symbol id="icon-list" viewBox="0 0 24 24"><path d="M9.5 6.5h10"/><path d="M9.5 12h10"/><path d="M9.5 17.5h10"/><path d="M4.5 6.5h.01"/><path d="M4.5 12h.01"/><path d="M4.5 17.5h.01"/></symbol>
@@ -349,9 +403,52 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
 
 <div class="top-rule" aria-hidden="true"></div>
 
+<button class="theme-btn settings-btn" id="settingsBtn" type="button" aria-label="Настройки" aria-haspopup="dialog" aria-expanded="false">
+  <svg class="ic" aria-hidden="true"><use href="#icon-settings"></use></svg>
+</button>
 <button class="theme-btn" id="siteThemeToggle" type="button" aria-label="Ночная тема">
   <svg class="ic" aria-hidden="true"><use id="siteThemeUse" href="#icon-moon"></use></svg>
 </button>
+
+<div class="overlay" id="settingsOverlay" aria-hidden="true">
+  <div class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <button class="toc-close-btn settings-close" id="settingsClose" type="button" aria-label="Закрыть настройки">
+      <svg class="ic" aria-hidden="true"><use href="#icon-x"></use></svg>
+    </button>
+    <h2 class="settings-title" id="settingsTitle">Настройки</h2>
+
+    <div class="settings-field">
+      <label for="fontSizeInput">Размер шрифта в читалке, px</label>
+      <input type="number" id="fontSizeInput" min="14" max="28" step="1" inputmode="numeric">
+    </div>
+
+    <label class="switch-row">
+      <span>
+        Сезонная атмосфера на сайте
+        <small>Снег, листья и другие сезонные эффекты по текущей дате</small>
+      </span>
+      <span class="switch">
+        <input type="checkbox" id="atmosphereToggle">
+        <span class="switch-track" aria-hidden="true"></span>
+      </span>
+    </label>
+
+    <label class="switch-row">
+      <span>
+        Меньше анимаций
+        <small>Для слабых телефонов — отключает декоративные эффекты</small>
+      </span>
+      <span class="switch">
+        <input type="checkbox" id="reduceMotionToggle">
+        <span class="switch-track" aria-hidden="true"></span>
+      </span>
+    </label>
+
+    <button class="settings-reset-btn" id="resetDataBtn" type="button">Сбросить избранное, прогресс и настройки</button>
+  </div>
+</div>
+
+<div class="atmosphere-layer" id="atmosphereLayer" aria-hidden="true" hidden></div>
 
 <header class="hero">
   <h1 class="hero-title">
@@ -381,7 +478,6 @@ body.night .icon-btn:hover{background:rgba(232,184,168,.14);color:#e8b8a8}
       <div class="dd-menu" id="sortDDMenu" role="listbox" aria-label="Сортировка" hidden>
         <button class="dd-item" type="button" data-value="new" role="option" aria-selected="true">Сначала новые</button>
         <button class="dd-item" type="button" data-value="old" role="option" aria-selected="false">Сначала старые</button>
-        <button class="dd-item" type="button" data-value="az" role="option" aria-selected="false">По названию</button>
         <button class="dd-item" type="button" data-value="size-desc" role="option" aria-selected="false">Сначала большие</button>
         <button class="dd-item" type="button" data-value="size-asc" role="option" aria-selected="false">Сначала маленькие</button>
       </div>
@@ -556,6 +652,15 @@ var siteThemeToggle = document.getElementById('siteThemeToggle');
 var siteThemeUse = document.getElementById('siteThemeUse');
 var toTop = document.getElementById('toTop');
 var remainingBadge = document.getElementById('remainingBadge');
+var settingsBtn = document.getElementById('settingsBtn');
+var settingsOverlay = document.getElementById('settingsOverlay');
+var settingsClose = document.getElementById('settingsClose');
+var fontSizeInput = document.getElementById('fontSizeInput');
+var atmosphereToggle = document.getElementById('atmosphereToggle');
+var reduceMotionToggle = document.getElementById('reduceMotionToggle');
+var resetDataBtn = document.getElementById('resetDataBtn');
+var atmosphereLayer = document.getElementById('atmosphereLayer');
+var settingsIsOpen = false;
 
 var toast = document.getElementById('toast');
 var toastMsg = document.getElementById('toastMsg');
@@ -565,19 +670,22 @@ var dateFmt = new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'
 var chapterRe = /^глава\s+\S.{0,60}$/i;
 var dividerRe = /^(❦|✦|⁂|\*{3,}|-{3,})$/;
 
+var FONT_MIN = 14, FONT_MAX = 28;
 function loadSettings(){
-  var def = {sort:'new', favOnly:false, fontSize:17, theme:'day', canonFilter:'all'};
+  var def = {sort:'new', favOnly:false, fontSize:17, theme:'day', canonFilter:'all', atmosphere:false, reduceMotion:false};
   try{
     var raw = localStorage.getItem(SETTINGS_KEY);
     if(!raw) return def;
     var o = JSON.parse(raw);
     var themeVal = o.theme || o.readerTheme; // readerTheme — старое имя поля из прошлой версии
     return {
-      sort: ['old','az','size-desc','size-asc'].indexOf(o.sort) !== -1 ? o.sort : 'new',
+      sort: ['old','size-desc','size-asc'].indexOf(o.sort) !== -1 ? o.sort : 'new',
       favOnly: !!o.favOnly,
-      fontSize: Math.min(22, Math.max(14, parseInt(o.fontSize,10)||17)),
+      fontSize: Math.min(FONT_MAX, Math.max(FONT_MIN, parseInt(o.fontSize,10)||17)),
       theme: themeVal==='night' ? 'night' : 'day',
-      canonFilter: ['canon','canon-main','noncanon'].indexOf(o.canonFilter) !== -1 ? o.canonFilter : 'all'
+      canonFilter: ['canon','canon-main','noncanon'].indexOf(o.canonFilter) !== -1 ? o.canonFilter : 'all',
+      atmosphere: !!o.atmosphere,
+      reduceMotion: !!o.reduceMotion
     };
   }catch(err){ return def; }
 }
@@ -892,7 +1000,6 @@ function getVisibleNovels(){
     });
   }
   if(settings.sort==='old') list.sort(function(a,b){ return (a.createdAt||0)-(b.createdAt||0); });
-  else if(settings.sort==='az') list.sort(function(a,b){ return a.title.localeCompare(b.title,'ru'); });
   else if(settings.sort==='size-desc') list.sort(function(a,b){ return (b.wordCount||0)-(a.wordCount||0); });
   else if(settings.sort==='size-asc') list.sort(function(a,b){ return (a.wordCount||0)-(b.wordCount||0); });
   else list.sort(function(a,b){ return (b.createdAt||0)-(a.createdAt||0); });
@@ -1096,7 +1203,7 @@ tocClose.addEventListener('click', function(){
 });
 
 function syncBodyLock(){
-  document.body.classList.toggle('locked', readerIsOpen);
+  document.body.classList.toggle('locked', readerIsOpen || settingsIsOpen);
 }
 
 function applyTheme(){
@@ -1108,6 +1215,7 @@ function applyTheme(){
   toTop.classList.toggle('night', night);
   siteThemeUse.setAttribute('href', night ? '#icon-sun' : '#icon-moon');
   siteThemeToggle.setAttribute('aria-label', night ? 'Дневная тема' : 'Ночная тема');
+  if(settings.atmosphere) updateAtmosphere();
 }
 siteThemeToggle.addEventListener('click', function(){
   settings.theme = settings.theme === 'night' ? 'day' : 'night';
@@ -1115,6 +1223,118 @@ siteThemeToggle.addEventListener('click', function(){
   applyTheme();
   siteThemeToggle.classList.remove('pop'); void siteThemeToggle.offsetWidth; siteThemeToggle.classList.add('pop');
 });
+
+/* ---------- настройки ---------- */
+function openSettings(){
+  fontSizeInput.value = settings.fontSize;
+  atmosphereToggle.checked = settings.atmosphere;
+  reduceMotionToggle.checked = settings.reduceMotion;
+  settingsOverlay.classList.add('open');
+  settingsOverlay.setAttribute('aria-hidden', 'false');
+  settingsBtn.setAttribute('aria-expanded', 'true');
+  settingsIsOpen = true;
+  syncBodyLock();
+  setTimeout(function(){ settingsClose.focus(); }, 150);
+}
+function closeSettings(){
+  if(!settingsIsOpen) return;
+  settingsOverlay.classList.remove('open');
+  settingsOverlay.setAttribute('aria-hidden', 'true');
+  settingsBtn.setAttribute('aria-expanded', 'false');
+  settingsIsOpen = false;
+  syncBodyLock();
+  try{ settingsBtn.focus({preventScroll:true}); }catch(err){}
+}
+settingsBtn.addEventListener('click', openSettings);
+settingsClose.addEventListener('click', closeSettings);
+settingsOverlay.addEventListener('mousedown', function(e){ if(e.target === settingsOverlay) closeSettings(); });
+
+function commitFontSize(){
+  var v = parseInt(fontSizeInput.value, 10);
+  if(isNaN(v)) v = settings.fontSize;
+  v = Math.min(FONT_MAX, Math.max(FONT_MIN, v));
+  settings.fontSize = v;
+  saveSettings();
+  applyFontSize();
+  requestAnimationFrame(updateProgressUI);
+}
+fontSizeInput.addEventListener('change', commitFontSize);
+fontSizeInput.addEventListener('blur', commitFontSize);
+
+atmosphereToggle.addEventListener('change', function(){
+  settings.atmosphere = atmosphereToggle.checked;
+  saveSettings();
+  updateAtmosphere();
+});
+reduceMotionToggle.addEventListener('change', function(){
+  settings.reduceMotion = reduceMotionToggle.checked;
+  saveSettings();
+  document.body.classList.toggle('reduce-motion', settings.reduceMotion);
+  updateAtmosphere();
+});
+
+resetDataBtn.addEventListener('click', function(){
+  if(!window.confirm('Сбросить избранное, прогресс чтения, историю и настройки на этом устройстве? Это нельзя отменить.')) return;
+  try{
+    localStorage.removeItem(SETTINGS_KEY);
+    localStorage.removeItem(PROGRESS_KEY);
+    localStorage.removeItem(FAVORITES_KEY);
+    localStorage.removeItem(HISTORY_KEY);
+  }catch(err){}
+  location.reload();
+});
+
+/* ---------- сезонная атмосфера ---------- */
+var ATMOSPHERE_BY_SEASON = {
+  winter: { glyphs: ['❄'], color: 'rgba(146,180,201,.8)', nightColor: 'rgba(232,240,245,.75)', count: 16 },
+  spring: { glyphs: ['✿','❀'], color: 'rgba(197,118,140,.65)', nightColor: 'rgba(232,184,168,.6)', count: 12 },
+  summer: { glyphs: ['✦','·'], color: 'rgba(196,150,60,.6)', nightColor: 'rgba(232,197,120,.6)', count: 14 },
+  autumn: { glyphs: ['❧'], color: 'rgba(180,110,50,.6)', nightColor: 'rgba(216,150,90,.6)', count: 14 }
+};
+function currentSeason(){
+  var m = new Date().getMonth();
+  if(m === 11 || m === 0 || m === 1) return 'winter';
+  if(m >= 2 && m <= 4) return 'spring';
+  if(m >= 5 && m <= 7) return 'summer';
+  return 'autumn';
+}
+function buildAtmosphere(){
+  var cfg = ATMOSPHERE_BY_SEASON[currentSeason()];
+  var night = settings.theme === 'night';
+  atmosphereLayer.innerHTML = '';
+  var frag = document.createDocumentFragment();
+  for(var i = 0; i < cfg.count; i++){
+    var span = document.createElement('span');
+    span.className = 'atmosphere-particle';
+    span.textContent = cfg.glyphs[i % cfg.glyphs.length];
+    var left = Math.random() * 100;
+    var duration = 9 + Math.random() * 10;
+    var delay = Math.random() * -18;
+    var size = 12 + Math.random() * 14;
+    var drift = (Math.random() * 120 - 60) + 'px';
+    var opacity = 0.4 + Math.random() * 0.4;
+    span.style.left = left + '%';
+    span.style.fontSize = size + 'px';
+    span.style.color = night ? cfg.nightColor : cfg.color;
+    span.style.animationDuration = duration + 's';
+    span.style.animationDelay = delay + 's';
+    span.style.setProperty('--drift', drift);
+    span.style.setProperty('--op', opacity);
+    frag.appendChild(span);
+  }
+  atmosphereLayer.appendChild(frag);
+}
+function updateAtmosphere(){
+  var reduced = settings.reduceMotion || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var show = settings.atmosphere && !reduced;
+  if(show){
+    buildAtmosphere();
+    atmosphereLayer.hidden = false;
+  }else{
+    atmosphereLayer.hidden = true;
+    atmosphereLayer.innerHTML = '';
+  }
+}
 
 function openReader(n, fromEl, skipPush){
   currentNovel = n;
@@ -1271,16 +1491,17 @@ toTop.addEventListener('click', function(){ reader.scrollTo({top:0, behavior:'sm
 
 function applyFontSize(){
   reader.style.setProperty('--rfs', settings.fontSize + 'px');
-  fontMinus.disabled = settings.fontSize <= 14;
-  fontPlus.disabled = settings.fontSize >= 22;
+  fontMinus.disabled = settings.fontSize <= FONT_MIN;
+  fontPlus.disabled = settings.fontSize >= FONT_MAX;
+  if(fontSizeInput && document.activeElement !== fontSizeInput) fontSizeInput.value = settings.fontSize;
 }
 fontMinus.addEventListener('click', function(){
-  settings.fontSize = Math.max(14, settings.fontSize - 1);
+  settings.fontSize = Math.max(FONT_MIN, settings.fontSize - 1);
   saveSettings(); applyFontSize();
   requestAnimationFrame(updateProgressUI);
 });
 fontPlus.addEventListener('click', function(){
-  settings.fontSize = Math.min(22, settings.fontSize + 1);
+  settings.fontSize = Math.min(FONT_MAX, settings.fontSize + 1);
   saveSettings(); applyFontSize();
   requestAnimationFrame(updateProgressUI);
 });
@@ -1385,7 +1606,9 @@ searchInput.addEventListener('input', doSearch);
 continueBtn.addEventListener('click', function(){ if(continueNovel) openReader(continueNovel, continueBtn); });
 
 document.addEventListener('keydown', function(e){
-  if(e.key === 'Escape' && readerIsOpen){
+  if(e.key !== 'Escape') return;
+  if(settingsIsOpen){ e.preventDefault(); closeSettings(); return; }
+  if(readerIsOpen){
     e.preventDefault();
     if(!tocPanel.hidden){ tocPanel.hidden = true; tocBtn.setAttribute('aria-expanded','false'); return; }
     requestCloseReader();
@@ -1398,6 +1621,8 @@ favFilter.classList.toggle('active', settings.favOnly);
 favFilter.setAttribute('aria-pressed', settings.favOnly ? 'true' : 'false');
 applyFontSize();
 applyTheme();
+document.body.classList.toggle('reduce-motion', settings.reduceMotion);
+updateAtmosphere();
 loadNovels();
 })();
 </script>
